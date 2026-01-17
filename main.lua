@@ -9,6 +9,19 @@ local LOADED_USER_DATA = {}
 
 -- FUNCTIONS --
 
+local function getRandomBytes(amount)
+    local urand = io.open("/dev/random","rb")
+    local bytes = nil
+
+    if not urand then
+        print("Error while getting random bytes")
+    else
+        bytes = urand:read(amount)
+    end
+
+    return bytes
+end
+
 local function load_config()
     local encoded_file = nil
     local config = nil
