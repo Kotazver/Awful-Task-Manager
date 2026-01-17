@@ -119,17 +119,6 @@ end
 -- MAIN MESSAGE HANDLING FUNCTION AND BOT RUNTIME --
 ----------------------------------------------------
 
-
-if load_config().runadminpanel == '1' then
-    os.execute('lua control.lua')
-elseif load_config().runadminpanel == '2' then
-    io.write('Do you want to run adminpanel automatically? y/N\n')
-    local ans = io.read():lower()
-    if ans == 'y' then
-        rewrite_config('runadminpanel','1')
-    end
-end
-
 local bot = require('telegram-bot-lua.core').configure(load_config().token)
 
 function bot.on_message(message)
