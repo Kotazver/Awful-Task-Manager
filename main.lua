@@ -205,7 +205,9 @@ while true do
         local request = client:receive()
         if request then
             if request == '/test' then
-                client:send('Yes!\n')
+                client:send('Connected.\n')
+            elseif request == '/help' then
+                client:send()
             end
         end
     

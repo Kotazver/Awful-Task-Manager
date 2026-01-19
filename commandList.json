@@ -1,5 +1,8 @@
-local list = [[[================]Command list:
-/help ===> shows all available commands
-]]
+{
+"/help" : {
+    "description" : "Displays all available commands",
+    "executionCode" : 1,
+    "args" : {}
+}
 
-return list
+}
