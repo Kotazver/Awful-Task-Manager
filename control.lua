@@ -32,16 +32,30 @@ local function handleCommands(command)
         if not request.command then
             for k,v in pairs(COMMANDS) do
                 if k == arg then
-                    request.command = arg
-                    break
+                    request.command = v.executionCode
+                    goto continue
+                else
+                    print('Invalid command!')
                 end
             end
         end
 
-        break
-    end
+        if not request.command then
+            break
+        end
+
+        if not request.args then
+            request.args = {}
+            table.insert(request.args,arg)
+        else
+            table.insert(request.args,arg)
+        end
     
-    return COMMANDS[request.command].executionCode
+        ::continue::
+    end
+
+    print(json.encode(request))
+    return request
 end
 
 ::retry::
@@ -62,8 +76,8 @@ while true do
     io.write('Enter command: ')
     local command = io.read()
     if command then
-        local code = handleCommands(command)
-        if code == 1 then
+        local request = handleCommands(command)
+        if request.command == -1 then
             print("help")
         end
     end

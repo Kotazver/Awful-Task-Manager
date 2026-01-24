@@ -1,7 +1,7 @@
 {
 "/help" : {
     "description" : "Displays all available commands",
-    "executionCode" : 1,
+    "executionCode" : -1,
     "args" : {}
 }
 
