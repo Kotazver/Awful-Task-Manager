@@ -1,8 +1,11 @@
 {
 "/help" : {
     "description" : "Displays all available commands",
-    "executionCode" : -1,
-    "args" : {}
+    "executionCode" : -1
+},
+"/test" : {
+    "description" : "test",
+    "executionCode" : 1
 }
 
 }

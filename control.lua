@@ -77,8 +77,12 @@ while true do
     local command = io.read()
     if command then
         local request = handleCommands(command)
-        if request.command == -1 then
-            print("help")
+        if request.command < 0 then
+            if request.command == -1 then
+                print("help")
+            end
+        else
+            client:send(request)
         end
     end
 end
