@@ -1,6 +1,6 @@
 local socket = require('socket.unix')
 local bear = require("bear")
-local json = require("json")
+local json = require("dkjson")
 
 COMMANDS = nil
 

@@ -1,4 +1,4 @@
-local json = require("json")
+local json = require("dkjson")
 local socket = require('socket.unix')
 
 --GLOBAL VARIABLES--

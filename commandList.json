@@ -7,8 +7,8 @@
     "description" : "Exits control panel",
     "executionCode" : -1
 },
-"/test" : {
-    "description" : "test",
+"/getUserData" : {
+    "description" : "show loaded user data",
     "executionCode" : 1
 }
 
