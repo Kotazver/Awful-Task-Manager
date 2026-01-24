@@ -36,6 +36,7 @@ local function handleCommands(command)
                     goto continue
                 else
                     print('Invalid command!')
+                    break
                 end
             end
         end
@@ -79,12 +80,15 @@ while true do
     if command then
         local request = handleCommands(command)
         if request then
-            if request.command < 0 then
+            if request.command and request.command < 0 then
                 if request.command == -1 then
+                    client:close()
+                    os.exit()
+                elseif request.command == -2 then
                     print("help")
                 end
             else
-                client:send(json.encode(request))
+                client:send(json.encode(request) .. "\n")
             end
         end
     end

@@ -1,6 +1,10 @@
 {
 "/help" : {
     "description" : "Displays all available commands",
+    "executionCode" : -2
+},
+"/exit" : {
+    "description" : "Exits control panel",
     "executionCode" : -1
 },
 "/test" : {

@@ -204,11 +204,7 @@ while true do
         client:settimeout(0)
         local request = client:receive()
         if request then
-            if request == '/test' then
-                client:send('Connected.\n')
-            elseif request == '/help' then
-                client:send()
-            end
+            print(request)
         end
     
     elseif not client then
