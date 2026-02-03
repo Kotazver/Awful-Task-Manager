@@ -147,8 +147,14 @@ end
 ----------------------------------------------------
 
 local CONFIG = load_config()
+local bot = nil
 
-local bot = require('telegram-bot-lua.core').configure(CONFIG.token)
+if CONFIG then
+    bot = require('telegram-bot-lua.core').configure(CONFIG.token)
+else
+    print("Can't load config file")
+    os.exit()
+end
 
 function bot.on_message(message)
     local text = message.text
