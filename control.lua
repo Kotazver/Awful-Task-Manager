@@ -34,15 +34,13 @@ local function handleCommands(command)
                 if k == arg then
                     request.command = v.executionCode
                     goto continue
-                else
-                    print('Invalid command!')
-                    break
                 end
             end
         end
 
         if not request.command then
             request = nil
+            print("Invalid command")
             break
         end
 
@@ -82,6 +80,7 @@ while true do
         if request then
             if request.command and request.command < 0 then
                 if request.command == -1 then
+                    client:send(json.encode(request) .. "\n")
                     client:close()
                     os.exit()
                 elseif request.command == -2 then
@@ -89,6 +88,19 @@ while true do
                 end
             else
                 client:send(json.encode(request) .. "\n")
+                local response = client:receive()
+                if request.command == 1 then
+                    local userData = json.decode(response)
+                    for k,v in pairs(userData) do
+                        print("ChatID: " .. k)
+                        print("         Tasks:\n")
+                        for k,v in ipairs(v.tasks) do
+                            print("             ID: " .. k)
+                            print("                 Name:" .. v.name)
+                            print("                 Descrription:" .. v.description .. "\n")
+                        end
+                    end
+                end
             end
         end
     end

@@ -9,6 +9,16 @@ local LOADED_USER_DATA = {}
 
 -- FUNCTIONS --
 
+local function handleCommands(request,client)
+    local requestId = request.command
+
+    if request.command == -1 then
+        client:close()
+    elseif requestId == 1 then
+        client:send(json.encode(LOADED_USER_DATA) .. "\n")
+    end
+end
+
 local function getRandomBytes(amount)
     local urand = io.open("/dev/random","rb")
     local bytes = nil
@@ -64,7 +74,7 @@ local function import_user_data(chat_id_to_import)
             LOADED_USER_DATA[index] = json.decode(loaded_data_json)
         end
     else
-        print("Can't find user data ".. chat_id_to_import)
+        print("Can't find user data " .. chat_id_to_import .. ", creating empty")
         LOADED_USER_DATA[index] = {}
         LOADED_USER_DATA[index].tasks = {}
     end
@@ -78,7 +88,7 @@ local function export_user_data(chat_id_to_export)
     local data_to_export = LOADED_USER_DATA[index]
 
     -- convert user data to json string --
-    local data_to_export_json = json.encode(data_to_export)
+    local data_to_export_json = json.encode(data_to_export,{ indent = true })
 
     -- write file --
     local file_to_write = io.open('UserData/' .. index .. '.json','w+')
@@ -87,8 +97,9 @@ local function export_user_data(chat_id_to_export)
     if file_to_write then
         file_to_write:write(data_to_export_json) -- sdaklmxzc''la[psod[sa-iiwidqjwiMAMASHA-RAIWELLA-SHLYONDRAsaodks[dk;'xz;ok;'kdasd]]]' --
         file_to_write:close()
+        print(chat_id_to_export .. " data saved successfully")
     else
-        print('Something went wrong while writing data')
+        print('Something went wrong while writing data' .. chat_id_to_export)
     end
 
     LOADED_USER_DATA[index] = nil
@@ -109,7 +120,7 @@ local function add_new_task(chat_id,bot)
     -- convert chat id into string to use it as table key --
     local index = tostring(chat_id)
 
-    -- check if tasks in user data exists if not create empty dictionary --
+    -- check if tasks in user data exists if not create empty table --
     if not LOADED_USER_DATA[index] then
         LOADED_USER_DATA[index] = {}
         LOADED_USER_DATA[index].tasks = {}
@@ -118,6 +129,9 @@ local function add_new_task(chat_id,bot)
             LOADED_USER_DATA[index].tasks = {}
         end
     end
+
+    -- Notify user that task successfully added to list --
+    bot.send_message(chat_id,"Task successfully added!")
 
     -- insert task to all user tasks
     table.insert(LOADED_USER_DATA[index].tasks,task_data)
@@ -132,7 +146,9 @@ end
 -- MAIN MESSAGE HANDLING FUNCTION AND BOT RUNTIME --
 ----------------------------------------------------
 
-local bot = require('telegram-bot-lua.core').configure(load_config().token)
+local CONFIG = load_config()
+
+local bot = require('telegram-bot-lua.core').configure(CONFIG.token)
 
 function bot.on_message(message)
     local text = message.text
@@ -144,7 +160,7 @@ function bot.on_message(message)
         import_user_data(chat_id)
     end
     
-    LOADED_USER_DATA[index].last_message_date = message.date
+    LOADED_USER_DATA[index].last_message_date = os.time()
     
     if ACTIVE_DIALOGUES[chat_id] then
         -- resume active dialogue --
@@ -173,7 +189,7 @@ function bot.on_message(message)
 
 
     elseif text == '/checkcurrenttasks' then
-        print(json.encode(LOADED_USER_DATA))
+        print(json.encode(LOADED_USER_DATA, {indent = true}))
     end
 end
 
@@ -184,7 +200,7 @@ end
 local limit = nil
 local timeout = nil
 local offset = nil
-local autosave_time = 5 -- time in seconds to autosave if user idle --
+local autosave_time = 300 -- time in seconds to autosave if user idle --
 
 
 -- socket setup --
@@ -199,12 +215,15 @@ local client = nil
 -- bot runtime --
 while true do
     
-    -- get and handle requests form client(admin)
+    -- get and handle requests from client(admin) --
     if client then
         client:settimeout(0)
         local request = client:receive()
         if request then
-            print(request)
+            request = json.decode(request)
+            
+            -- commands handling function that takes request table --
+            handleCommands(request,client)
         end
     
     elseif not client then
@@ -224,7 +243,6 @@ while true do
     if next(LOADED_USER_DATA) then
         for id, value in pairs(LOADED_USER_DATA) do
             if value.last_message_date + autosave_time < os.time() then
-                print(json.encode(LOADED_USER_DATA))
                 export_user_data(id)
             end
         end
