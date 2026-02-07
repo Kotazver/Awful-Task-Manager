@@ -1,6 +1,6 @@
 local json = require("dkjson")
 local socket = require('socket.unix')
-
+local sodium = require('sodium')
 --GLOBAL VARIABLES--
 
 local ACTIVE_DIALOGUES = {}
@@ -17,19 +17,6 @@ local function handleCommands(request,client)
     elseif requestId == 1 then
         client:send(json.encode(LOADED_USER_DATA) .. "\n")
     end
-end
-
-local function getRandomBytes(amount)
-    local urand = io.open("/dev/random","rb")
-    local bytes = nil
-
-    if not urand then
-        print("Error while getting random bytes")
-    else
-        bytes = urand:read(amount)
-    end
-
-    return bytes
 end
 
 local function load_config()
@@ -254,3 +241,4 @@ while true do
         end
     end
 end
+
