@@ -1,6 +1,7 @@
 local json = require("dkjson")
 local socket = require('socket.unix')
 local sodium = require('sodium')
+
 --GLOBAL VARIABLES--
 
 local ACTIVE_DIALOGUES = {}
@@ -8,6 +9,18 @@ local LOADED_USER_DATA = {}
 
 
 -- FUNCTIONS --
+
+local function getKey(pass,salt)
+    local key = sodium.crypto_pwhash(
+        sodium.crypto_secretbox_KEYBYTES,
+        pass,
+        salt,
+        sodium.crypto_pwhash_argon2id_OPSLIMIT_INTERACTIVE,
+        sodium.crypto_pwhash_argon2id_MEMLIMIT_INTERACTIVE,
+        sodium.crypto_pwhash_ALG_DEFAULT
+    )
+    return key
+end
 
 local function handleCommands(request,client)
     local requestId = request.command
